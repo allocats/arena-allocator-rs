@@ -137,6 +137,19 @@ impl Arena {
             Ok(())
         }
     }
+
+    pub unsafe fn reset(&mut self) {
+        unsafe {
+            let mut current = self.start;
+
+            while !current.is_null() {
+                (*current).usage = 0;
+                current = (*current).next;
+            }
+
+            self.end = self.start;
+        }
+    }
 }
 
 fn main() {
@@ -152,5 +165,7 @@ fn main() {
             Ok(_) => println!("Freed"),
             Err(e) => println!("Error: {:?}", e)
         };
+
+        arena.reset();
     }
 }
